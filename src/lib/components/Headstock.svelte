@@ -84,7 +84,7 @@
 			aria-label="Play {noteName(midi)}{octave(midi)}"
 			aria-pressed={active}
 			class={[
-				'absolute grid size-[14%] -translate-1/2 place-items-center rounded-full text-xl font-semibold transition',
+				'absolute grid size-[clamp(44px,14%,60px)] -translate-1/2 place-items-center rounded-full text-xl font-semibold transition',
 				tuned ? 'bg-good text-on-good' : 'bg-raised text-fg',
 				active && 'ring-3 ring-accent'
 			]}
