@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ChevronRight, Mic, RotateCcw } from '@lucide/svelte';
+	import { onDestroy } from 'svelte';
 	import Headstock from '#lib/components/Headstock.svelte';
 	import Meter from '#lib/components/Meter.svelte';
 	import TuningSheet from '#lib/components/TuningSheet.svelte';
@@ -7,6 +8,7 @@
 	import { Tuner } from '#lib/tuner.svelte.js';
 
 	const tuner = new Tuner();
+	onDestroy(() => tuner.stop());
 	let sheetOpen = $state(false);
 	let tuning = $derived(tuner.tunings.selected);
 </script>
