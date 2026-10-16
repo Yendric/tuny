@@ -29,7 +29,7 @@ export class Tuner {
 	#wakeLock: WakeLockSentinel | undefined;
 	#tracker = new PitchTracker();
 	#display = new OneEuroFilter(60, DISPLAY_MIN_CUTOFF, DISPLAY_BETA);
-	#inTuneSince: number | null = null;
+	#inTuneSince: { index: number; time: number } | null = null;
 	#tonesPlaying = 0;
 
 	targets = $derived(
@@ -121,8 +121,10 @@ export class Tuner {
 			this.#inTuneSince = null;
 			return;
 		}
-		this.#inTuneSince ??= now;
-		if (now - this.#inTuneSince < HOLD_MS || this.tuned.has(this.stringIndex)) return;
+		if (this.#inTuneSince?.index !== this.stringIndex) {
+			this.#inTuneSince = { index: this.stringIndex, time: now };
+		}
+		if (now - this.#inTuneSince.time < HOLD_MS || this.tuned.has(this.stringIndex)) return;
 
 		this.tuned.add(this.stringIndex);
 		const next = this.targets.findIndex((_, i) => !this.tuned.has(i));
