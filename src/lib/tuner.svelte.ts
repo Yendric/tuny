@@ -1,16 +1,19 @@
+import { OneEuroFilter } from '1eurofilter';
 import * as v from 'valibot';
 import { SvelteSet } from 'svelte/reactivity';
 import { PitchListener } from './audio/pitch-listener';
+import { JUMP_CENTS, PitchTracker, type Frame } from './audio/pitch-tracker';
 import { playTone } from './audio/tone';
-import { cents, frequency, median, nearestIndex } from './notes';
+import { cents, frequency, nearestIndex } from './notes';
 import { persisted } from './persisted';
 import { TuningStore } from './tunings.svelte';
 
 export const IN_TUNE_CENTS = 5;
 const HOLD_MS = 1000;
 export const TRAIL_MS = 5000;
-const SMOOTHING_FRAMES = 5;
-const SILENCE_FRAMES = 12;
+const A4 = 440;
+const DISPLAY_MIN_CUTOFF = 1;
+const DISPLAY_BETA = 0.05;
 
 export type Status = 'idle' | 'starting' | 'listening' | 'denied' | 'error';
 export type TrailPoint = { time: number; cents: number | null };
@@ -24,8 +27,8 @@ export class Tuner {
 	#auto = persisted('tuny:auto', v.boolean(), true);
 	#listener = new PitchListener();
 	#wakeLock: WakeLockSentinel | undefined;
-	#recent: number[] = [];
-	#silentFrames = 0;
+	#tracker = new PitchTracker();
+	#display = new OneEuroFilter(60, DISPLAY_MIN_CUTOFF, DISPLAY_BETA);
 	#inTuneSince: number | null = null;
 	#tonesPlaying = 0;
 
@@ -56,7 +59,7 @@ export class Tuner {
 	async start() {
 		this.status = 'starting';
 		try {
-			await this.#listener.start(this.#onPitch);
+			await this.#listener.start(this.#onFrame);
 			this.status = 'listening';
 			await this.#lockScreen();
 		} catch (error) {
@@ -74,6 +77,7 @@ export class Tuner {
 	stop() {
 		this.#listener.stop();
 		void this.#wakeLock?.release();
+		this.#tracker.reset();
 		this.status = 'idle';
 		this.frequency = null;
 	}
@@ -94,8 +98,9 @@ export class Tuner {
 		this.stringIndex = 0;
 	}
 
-	#onPitch = (hz: number | null) => {
-		this.#smooth(this.#tonesPlaying > 0 ? null : hz);
+	#onFrame = (frame: Frame) => {
+		const hz = this.#tracker.push(this.#tonesPlaying > 0 ? { ...frame, hz: null } : frame);
+		this.frequency = hz === null ? null : this.#steady(hz, frame.time);
 		if (this.auto && this.frequency !== null) {
 			this.stringIndex = nearestIndex(this.frequency, this.targets);
 		}
@@ -103,16 +108,11 @@ export class Tuner {
 		this.#record();
 	};
 
-	#smooth(hz: number | null) {
-		if (hz === null) {
-			if (++this.#silentFrames < SILENCE_FRAMES) return;
-			this.#recent = [];
-			this.frequency = null;
-			return;
+	#steady(hz: number, time: number): number {
+		if (this.frequency === null || Math.abs(cents(hz, this.frequency)) > JUMP_CENTS) {
+			this.#display.reset();
 		}
-		this.#silentFrames = 0;
-		this.#recent = [...this.#recent, hz].slice(-SMOOTHING_FRAMES);
-		this.frequency = median(this.#recent);
+		return A4 * 2 ** (this.#display.filter(cents(hz, A4), time / 1000) / 1200);
 	}
 
 	#trackInTune() {

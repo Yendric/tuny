@@ -1,4 +1,5 @@
 import { PitchDetector } from 'pitchy';
+import type { Frame } from './pitch-tracker';
 
 const MIN_CLARITY = 0.9;
 const MIN_HZ = 50;
@@ -9,7 +10,7 @@ export class PitchListener {
 	#stream: MediaStream | undefined;
 	#frame = 0;
 
-	async start(onPitch: (hz: number | null) => void) {
+	async start(onFrame: (frame: Frame) => void) {
 		this.#stream = await navigator.mediaDevices.getUserMedia({
 			audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
 		});
@@ -24,7 +25,11 @@ export class PitchListener {
 		const tick = () => {
 			analyser.getFloatTimeDomainData(buffer);
 			const [hz, clarity] = detector.findPitch(buffer, context.sampleRate);
-			onPitch(clarity >= MIN_CLARITY && hz >= MIN_HZ && hz <= MAX_HZ ? hz : null);
+			onFrame({
+				hz: clarity >= MIN_CLARITY && hz >= MIN_HZ && hz <= MAX_HZ ? hz : null,
+				rms: Math.sqrt(buffer.reduce((sum, x) => sum + x * x, 0) / buffer.length),
+				time: performance.now()
+			});
 			this.#frame = requestAnimationFrame(tick);
 		};
 		tick();
