@@ -4,6 +4,8 @@ import type { Frame } from './pitch-tracker';
 const MIN_CLARITY = 0.9;
 const MIN_HZ = 50;
 const MAX_HZ = 1400;
+const LOWPASS_HZ = 600;
+const BUTTERWORTH_Q_DB = 20 * Math.log10(Math.SQRT1_2);
 
 export class PitchListener {
 	#context: AudioContext | undefined;
@@ -16,7 +18,8 @@ export class PitchListener {
 		});
 		const context = (this.#context = new AudioContext());
 		const analyser = new AnalyserNode(context, { fftSize: 4096 });
-		context.createMediaStreamSource(this.#stream).connect(analyser);
+		const lowpass = new BiquadFilterNode(context, { frequency: LOWPASS_HZ, Q: BUTTERWORTH_Q_DB });
+		context.createMediaStreamSource(this.#stream).connect(lowpass).connect(analyser);
 
 		const detector = PitchDetector.forFloat32Array(analyser.fftSize);
 		detector.minVolumeDecibels = -50;
