@@ -6,7 +6,7 @@ Guitar tuner PWA. SvelteKit (adapter-static) + Svelte 5 runes, Tailwind CSS, pnp
 
 - Focus on clean, minimal code. Don't reinvent the wheel every time and reuse existing patterns when you implement something new.
 - Type safety is important. Never use type hacks (`as any`, `as unknown as`, `@ts-ignore`, non-null `!` to silence errors). If something can be done in a way where the compiler can catch an error in the future (or just give autocomplete), vs a way where you have to do things manually, the former is always preferred.
-- Only add comments if absolutely necessary, otherwise remove them.
+- Only add comments if absolutely necessary, otherwise remove them. Generated scaffold comments can stay.
 - Use short, conventional commits, with no body, only the message.
 - Use the Svelte MCP / svelte skills for Svelte 5 best practices and run the autofixer on components.
 
