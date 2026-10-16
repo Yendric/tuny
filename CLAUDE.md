@@ -12,4 +12,4 @@ Guitar tuner PWA. SvelteKit (adapter-static) + Svelte 5 runes, Tailwind CSS, pnp
 
 ## Visual testing
 
-Playwright MCP is configured in `.mcp.json` with `.playwright/mcp.json`. Chromium gets a fake microphone that plays `.playwright/mic.wav` (an A2 tone about 46 cents flat), with mic permission granted and a 390x844 mobile viewport.
+Playwright MCP is configured in `.mcp.json` with `.playwright/mcp.json`. Chromium gets a fake microphone that loops `.playwright/mic.wav` (an A2 that wobbles up from about 100 cents flat for 5s, then holds in tune for 5s), with mic permission granted and a 390x844 mobile viewport.

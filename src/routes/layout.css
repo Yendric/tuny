@@ -1,1 +1,61 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/bricolage-grotesque';
+
+@theme inline {
+	--font-sans: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+	--color-bg: var(--bg);
+	--color-surface: var(--surface);
+	--color-raised: var(--raised);
+	--color-line: var(--line);
+	--color-fg: var(--fg);
+	--color-muted: var(--muted);
+	--color-accent: var(--accent);
+	--color-on-accent: var(--on-accent);
+	--color-good: var(--good);
+	--color-on-good: var(--on-good);
+
+	--animate-sheet: sheet 200ms ease-out;
+
+	@keyframes sheet {
+		from {
+			translate: 0 100%;
+		}
+	}
+}
+
+:root {
+	--bg: #f6efe4;
+	--surface: #fffaf3;
+	--raised: #ebe0cf;
+	--line: rgb(90 60 30 / 0.1);
+	--fg: #2a2017;
+	--muted: #7d6b58;
+	--accent: #d27c08;
+	--on-accent: #fffaf3;
+	--good: #1c9d58;
+	--on-good: #fffaf3;
+	color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #15110d;
+		--surface: #201a14;
+		--raised: #2c241c;
+		--line: rgb(255 230 200 / 0.07);
+		--fg: #f6ede1;
+		--muted: #9d8d7a;
+		--accent: #f5a524;
+		--on-accent: #1b140c;
+		--good: #3ddc84;
+		--on-good: #0d2116;
+		color-scheme: dark;
+	}
+}
+
+html,
+body {
+	@apply h-full bg-bg font-sans text-fg antialiased;
+	-webkit-tap-highlight-color: transparent;
+	overscroll-behavior: none;
+}
