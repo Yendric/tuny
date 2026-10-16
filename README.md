@@ -2,6 +2,8 @@
 
 Guitar tuner PWA with built-in and custom tunings.
 
+https://github.com/user-attachments/assets/8d7e494b-8541-4467-8ab4-fe3d1e758eb3
+
 ```sh
 pnpm install
 pnpm dev      # http://localhost:5173
