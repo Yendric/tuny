@@ -1,11 +1,11 @@
 export const NOTE_NAMES = [
 	'C',
-	'C#',
+	'Db',
 	'D',
 	'Eb',
 	'E',
 	'F',
-	'F#',
+	'Gb',
 	'G',
 	'Ab',
 	'A',
