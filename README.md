@@ -1,54 +1,13 @@
-# sv
+# Tuny
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+Guitar tuner PWA with built-in and custom tunings.
 
 ```sh
-# create a new project
-npx sv create my-app
+pnpm install
+pnpm dev      # http://localhost:5173
+pnpm check    # svelte-check + service worker types
+pnpm test     # vitest
+pnpm build    # static site in build/
 ```
 
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-pnpm dlx sv@1.1.1 create --template minimal --types ts --add prettier eslint vitest="usages:unit" tailwindcss="plugins:none" sveltekit-adapter="adapter:static" --install pnpm .
-```
-
-## Adding features
-
-Add features to your project with `sv add`:
-
-```sh
-npx sv add
-```
-
-For example, to add Tailwind CSS:
-
-```sh
-npx sv add tailwindcss
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
+Deploy `build/` to any static host over HTTPS (microphone access and service workers need a secure context).
